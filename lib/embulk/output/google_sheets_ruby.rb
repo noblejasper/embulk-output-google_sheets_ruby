@@ -56,8 +56,8 @@ module Embulk
         {}
       end
 
-      def authorizer
-        case auth_method
+      def authorize
+        case @auth_method
         when 'service_account'
           return Google::Auth::ServiceAccountCredentials.make_creds(
             json_key_io: File.open(@credentials_path),
@@ -71,11 +71,6 @@ module Embulk
         else
           raise ConfigError.new("Unknown auth method: #{auth_method}")
         end
-      end
-
-      def authorize
-        authorizer.fetch_access_token!
-        authorizer
       end
 
       def update_sheet(value_range)
