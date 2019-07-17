@@ -17,7 +17,8 @@ module Embulk
           'range' => config.param('range', :string, default: 'A1'),
           'credentials_path' => config.param('credentials_path',
                                              :string,
-                                             default: 'credentials.json')
+                                             default: 'credentials.json'),
+          'auth_method' => config.param('auth_method', :string, default: 'service_account')
         }
 
         yield(task)
@@ -29,6 +30,7 @@ module Embulk
         @spreadsheet_id = task['spreadsheet_id']
         @credentials_path = task['credentials_path']
         @range = task['range']
+        @auth_method = task['auth_method']
         @rows = []
         @rows << schema.map(&:name)
 
@@ -54,13 +56,25 @@ module Embulk
         {}
       end
 
-      def authorize
-        authorizer = Google::Auth::ServiceAccountCredentials.make_creds(
-          json_key_io: File.open(@credentials_path),
-          scope: SCOPE
-        )
-        authorizer.fetch_access_token!
+      def authorizer
+        case auth_method
+        when 'service_account'
+          return Google::Auth::ServiceAccountCredentials.make_creds(
+            json_key_io: File.open(@credentials_path),
+            scope: SCOPE
+            )
+        when 'authorized_user'
+          return Google::Auth::UserRefreshCredentials.make_creds(
+            json_key_io: File.open(@credentials_path),
+            scope: SCOPE
+            )
+        else
+          raise ConfigError.new("Unknown auth method: #{auth_method}")
+        end
+      end
 
+      def authorize
+        authorizer.fetch_access_token!
         authorizer
       end
 
