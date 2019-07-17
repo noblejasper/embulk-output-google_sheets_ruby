@@ -11,9 +11,6 @@ Dumps records to Google Sheets.
 
 ## Configuration
 
-- **spreadsheet_id**: Spreadsheet ID (string, required)
-- **credentials_path**: Credentials JSON path (string, default: `"credentials.json"`)
-
 | name             | type   | requirement | default              | description                            |
 | :--------------- | :----- | :---------- | :------------------- | :------------------------------------- |
 | spreadsheet_id   | string | required    |                      |                                        |
