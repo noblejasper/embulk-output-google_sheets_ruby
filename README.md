@@ -18,7 +18,7 @@ Dumps records to Google Sheets.
 | range            | string | optional    | `"A1"`               |                                        |
 | auth_method      | string | optional    | `service_account`    | `service_account` or `authorized_user` |
 
-##### about keyfile
+##### about credentials_path
 
 - if `auth_method` is `service_account`, set the service account credential json file path.
 - if `auth_method` is `authorized_user`, this plugin supposes the format is the below.
